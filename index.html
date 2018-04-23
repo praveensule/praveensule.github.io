@@ -1,0 +1,58 @@
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    $("button").click(function(){
+		var name=3083; //SBI Bluechip Fund
+        var jsonString=$.get('https://www.valueresearchonline.com/funds/portfoliovr.asp?schemecode=' + name, function(response) {
+			var rows = [];
+			$(response).find(".fund-snapshot-port-holdings-equity tr").each(function(i, n){
+                var $row = $(n);
+				//PE	3Y High	3Y Low	% Assets
+				//console.log($row.find('td:eq(0)').find('img').attr('src'));
+				
+				var imgSrc=$row.find('td:eq(0)').find('img').attr('src');
+				if(imgSrc){
+					var currentStatus=""
+				if(imgSrc.indexOf('equal') != -1){
+					currentStatus="NC"
+				} else if(imgSrc.indexOf('up') != -1){
+					currentStatus="UP"
+				}else{
+					currentStatus="DOWN"
+				}
+				var shareName=$row.find('td:eq(1)').find('a').text();
+				var sector=$row.find('td:eq(2)').find('a').text();
+				var pe=$row.find('td:eq(3)').text();
+				var yrHigh=$row.find('td:eq(4)').text();
+				var yrLow=$row.find('td:eq(5)').text();
+				var assets=$row.find('td:eq(6)').text();
+                rows.push({
+                    currentStatus: currentStatus,
+                    shareName: shareName,
+                    sector: sector,
+                    pe: pe,
+                    yrHigh:  yrHigh,
+                    yrLow: yrLow,
+                    assets: assets
+                });
+				}
+            });
+			console.log(rows)
+			$("#contents").html(JSON.stringify(rows))
+			//return JSON.stringify(rows);
+		});
+		
+    });
+});
+</script>
+</head>
+<body>
+
+<div id="div1"><h2>Let jQuery AJAX Change This Text</h2></div>
+
+<button>Get External Content</button>
+<div id="contents"></div>
+</body>
+</html>
